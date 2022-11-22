@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notification/screens/second_screen.dart';
 import 'package:flutter_local_notification/services/local_notification_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -54,9 +55,9 @@ class _HomeState extends State<Home> {
                           body: 'Some body 1',
                           year: 2022,
                           month: 11,
-                          day: 4,
+                          day: 22,
                           hour: 15,
-                          min: 44);
+                          min: 26);
                     },
                     child: const Text('Show Scheduled Notification'),
                   ),
@@ -84,6 +85,11 @@ class _HomeState extends State<Home> {
                     },
                     child: const Text('Show Notification With Payload'),
                   ),
+                  TextButton(
+                      onPressed: () async {
+                        await FlutterLocalNotificationsPlugin().cancel(0);
+                      },
+                      child: Text("Remove "))
                 ],
               ),
             ),
