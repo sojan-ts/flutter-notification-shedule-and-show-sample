@@ -6,7 +6,8 @@ import 'package:timezone/data/latest.dart' as tz;
 class LocalNotificationService {
   LocalNotificationService();
 
-  final _localNotificationService = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotificationService =
+      FlutterLocalNotificationsPlugin();
 
   final BehaviorSubject<String?> onNotificationClick = BehaviorSubject();
 
@@ -15,41 +16,18 @@ class LocalNotificationService {
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings('@drawable/ic_stat_android');
 
-    IOSInitializationSettings iosInitializationSettings =
-        IOSInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification:
+            (int id, String? title, String? body, String? payload) async {});
 
-    final InitializationSettings settings = InitializationSettings(
-      android: androidInitializationSettings,
-      iOS: iosInitializationSettings,
-    );
-
-    await _localNotificationService.initialize(
-      settings,
-      onSelectNotification: onSelectNotification,
-    );
-  }
-
-  Future<NotificationDetails> _notificationDetails() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails('channel_id', 'channel_name',
-            channelDescription: 'description',
-            importance: Importance.max,
-            priority: Priority.max,
-            playSound: true,
-            sound: RawResourceAndroidNotificationSound("snd"));
-
-    const IOSNotificationDetails iosNotificationDetails =
-        IOSNotificationDetails();
-
-    return const NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: iosNotificationDetails,
-    );
+    var initializationSettings = InitializationSettings(
+        android: androidInitializationSettings, iOS: initializationSettingsIOS);
+    await _localNotificationService.initialize(initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) async {});
   }
 
   Future<void> showNotification({
@@ -71,7 +49,7 @@ class LocalNotificationService {
       required int hour,
       required int min}) async {
     final data = 1;
-    if(data == 1) {
+    if (data == 1) {
       final details = await _notificationDetails();
       await _localNotificationService.zonedSchedule(
         id,
@@ -82,12 +60,11 @@ class LocalNotificationService {
           tz.local,
         ),
         details,
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
+            UILocalNotificationDateInterpretation.absoluteTime,
       );
     }
-
   }
 
   Future<void> showNotificationWithPayload(
@@ -111,4 +88,19 @@ class LocalNotificationService {
       onNotificationClick.add(payload);
     }
   }
+}
+
+Future<NotificationDetails> _notificationDetails() async {
+  const AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails('channel_id', 'channel_name',
+          channelDescription: 'description',
+          importance: Importance.max,
+          priority: Priority.max,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound("snd"));
+
+  return const NotificationDetails(
+    android: androidNotificationDetails,
+    iOS: DarwinNotificationDetails(),
+  );
 }
