@@ -53,11 +53,11 @@ class _HomeState extends State<Home> {
                           id: 0,
                           title: 'Hello dude',
                           body: 'Some body 1',
-                          year: 2022,
-                          month: 11,
-                          day: 22,
-                          hour: 15,
-                          min: 26);
+                          year: 2023,
+                          month: 09,
+                          day: 16,
+                          hour: 13,
+                          min: 16);
                     },
                     child: const Text('Show Scheduled Notification'),
                   ),

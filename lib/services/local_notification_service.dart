@@ -40,7 +40,8 @@ class LocalNotificationService {
             channelDescription: 'description',
             importance: Importance.max,
             priority: Priority.max,
-            playSound: true);
+            playSound: true,
+            sound: RawResourceAndroidNotificationSound("snd"));
 
     const IOSNotificationDetails iosNotificationDetails =
         IOSNotificationDetails();
@@ -69,20 +70,24 @@ class LocalNotificationService {
       required int day,
       required int hour,
       required int min}) async {
-    final details = await _notificationDetails();
-    await _localNotificationService.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(
-        DateTime(year, month, day, hour, min, 00),
-        tz.local,
-      ),
-      details,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+    final data = 1;
+    if(data == 1) {
+      final details = await _notificationDetails();
+      await _localNotificationService.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(
+          DateTime(year, month, day, hour, min, 00),
+          tz.local,
+        ),
+        details,
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
+
   }
 
   Future<void> showNotificationWithPayload(
