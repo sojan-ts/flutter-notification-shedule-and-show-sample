@@ -27,7 +27,12 @@ class LocalNotificationService {
         android: androidInitializationSettings, iOS: initializationSettingsIOS);
     await _localNotificationService.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
-            (NotificationResponse notificationResponse) async {});
+            (NotificationResponse notificationResponse) async {
+      if (notificationResponse.payload != null &&
+          notificationResponse.payload!.isNotEmpty) {
+        onNotificationClick.add(notificationResponse.payload);
+      }
+    });
   }
 
   Future<void> showNotification({
@@ -80,13 +85,6 @@ class LocalNotificationService {
   void onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) {
     print('id $id');
-  }
-
-  void onSelectNotification(String? payload) {
-    print('payload $payload');
-    if (payload != null && payload.isNotEmpty) {
-      onNotificationClick.add(payload);
-    }
   }
 }
 
